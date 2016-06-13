@@ -10,13 +10,15 @@
 - make sure your game is set to windowed mode
 - download the .EXE from latest [release](https://github.com/atomizer/starbreak-zoom/releases/latest)
 - put the executable in a separate folder, it will drop some files next to it
-- on first start, you are asked to show where the game is located
-- launch the game and play
+- on first start, show where the game is located
+- loader will sit in tray, you can now launch the game
 
 ### Default keys
 
 Zoom in: Numpad +
+
 Zoom out: Numpad -
+
 Native resolution: Numpad 0
 
 ### Limitations
@@ -30,15 +32,15 @@ Native resolution: Numpad 0
 
 To edit the keys, window size and which monitor to put the window on, right-click the loader icon. To apply the settings you need to close and re-open the game. Acceptable key names can be found [here](https://autohotkey.com/docs/KeyList.htm).
 
-## Creating the binary
+### Creating the binary
 
 If you don't trust me, you can compile the EXE yourself. You will need:
 
 - installed [AutoHotkey](https://autohotkey.com/download/ahk-install.exe)
-- 32bit Unicode [AutoHotkey.dll](https://github.com/HotKeyIt/ahkdll-v1-release/tree/master/Win32w)
-- 32bit [MinHook.dll](http://www.codeproject.com/Articles/44326/MinHook-The-Minimalistic-x-x-API-Hooking-Libra)
+- 32 bit Unicode [AutoHotkey.dll](https://github.com/HotKeyIt/ahkdll-v1-release/tree/master/Win32w)
+- 32 bit [MinHook.dll](http://www.codeproject.com/Articles/44326/MinHook-The-Minimalistic-x-x-API-Hooking-Libra)
 
-Put the DLLs in root folder of the project and use the "Compile .ahk to .exe" AutoHotkey tool on `loader.ahk`, using 32 bit AutoHotkey as base executable.
+Put the DLLs next to the scripts and use the "Convert .ahk to .exe" AutoHotkey tool on `loader.ahk`, using 32 bit unicode AutoHotkey as base executable.
 
 Alternatively, after acquiring the DLLs, you can just run `loader.ahk` without compiling (don't forget to use 32 bit AutoHotkey).
 
