@@ -202,7 +202,7 @@ SwapWindowHook(window) {
   global GL_DRAW_FRAMEBUFFER, GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_BACK, GL_COLOR_BUFFER_BIT, GL_LINEAR, GL_RGBA8
   global BUFFERWIDTH, BUFFERHEIGHT
   global glGenFramebuffers, glBindFramebuffer, glBindRenderbuffer, glRenderbufferStorage, glGenRenderbuffers
-  global glFramebufferRenderbuffer, glCheckFramebufferStatus, glBlitFramebuffer
+  global glFramebufferRenderbuffer, glCheckFramebufferStatus, glBlitFramebuffer, glGetError
   global origSwapWindow, needsetup, framebuffer, renderbuffer
   global wWidth, wHeight, cWidth, cHeight
 
@@ -211,24 +211,30 @@ SwapWindowHook(window) {
 
     ; framebuffer
     glGenFramebuffers[1, &framebuffer]
+    checkGLError("glGenFramebuffers")
     framebuffer := NumGet(&framebuffer)
     glBindFramebuffer[GL_FRAMEBUFFER, framebuffer]
+    checkGLError("glBindFramebuffer")
 
     ; renderbuffer
     glGenRenderbuffers[1, &renderbuffer]
+    checkGLError("glGenRenderbuffers")
     renderbuffer := NumGet(&renderbuffer)
     glBindRenderbuffer[GL_RENDERBUFFER, renderbuffer]
+    checkGLError("glBindRenderbuffer")
     glRenderbufferStorage[GL_RENDERBUFFER, GL_RGBA8, BUFFERWIDTH, BUFFERHEIGHT]
+    checkGLError("glRenderbufferStorage")
 
     ; attach one to the other
     glFramebufferRenderbuffer[GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer]
+    checkGLError("glFramebufferRenderbuffer")
 
     ; check for gremlins
     status := glCheckFramebufferStatus[GL_FRAMEBUFFER]
     if (status != GL_FRAMEBUFFER_COMPLETE) {
-      log("framebuffer error: " . status)
+      MsgBox, 16, , Framebuffer is not complete.`nStatus code: %status%
+      ExitApp
     }
-
     needsetup := false
   }
 
@@ -236,6 +242,7 @@ SwapWindowHook(window) {
   glBindFramebuffer[GL_DRAW_FRAMEBUFFER, 0]
   glBindFramebuffer[GL_READ_FRAMEBUFFER, framebuffer]
   glBlitFramebuffer[0, 0, cWidth, cHeight, 0, 0, wWidth, wHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR]
+  checkGLError("glBlitFramebuffer")
 
   ; don't forget to call the original function
   origSwapWindow[window]
@@ -349,6 +356,16 @@ InitGLFunctions() {
   glGenFramebuffers := DynaCall(getGLProc["glGenFramebuffers"], "it")
   glDeleteFramebuffers := DynaCall(getGLProc["glDeleteFramebuffers"], "it")
   glFramebufferRenderbuffer := DynaCall(getGLProc["glFramebufferRenderbuffer"], "iiii")
+  glGetError := DynaCall(getGLProc["glGetError"], "i==")
+}
+
+checkGLError(lastfunc) {
+  global glGetError
+  err := glGetError[]
+  if (err = 0)
+    return
+  MsgBox, 16, , GL error!`n`nFunction: %lastfunc%`nError code: %err%
+  ExitApp
 }
 
 Cleanup:
