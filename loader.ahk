@@ -24,16 +24,16 @@ if (!FileExist(gamePath . "\" . PROCNAME)) {
   FileSelectFile, fullPath, 3, , Select the StarBreak executable, StarBreak (%PROCNAME%)
   SplitPath, fullPath, fileName, gamePath
   if (!FileExist(gamePath . "\" . PROCNAME)) {
-    MsgBox Game EXE not found! Exiting.
-    return
+    MsgBox, 16, , Game EXE not found.
+    ExitApp
   }
   IniWrite, %gamePath%, %ini%, default, gamePath
 }
 if (!FileExist(gamePath . "\MinHook.dll")) {
   FileCopy, MinHook.dll, %gamePath%\MinHook.dll, 1
   if (ErrorLevel) {
-    MsgBox Could not copy MinHook.dll into the game folder.`nMaybe do it yourself?
-    return
+    MsgBox, 16, , Could not copy MinHook.dll into the game folder.
+    ExitApp
   }
 }
 
@@ -57,7 +57,8 @@ LoadScript() {
     TrayTip, , game closed, 2
   }
   else {
-    MsgBox failed to inject AutoHotkey.dll
+    MsgBox, 48, , Failed to inject AutoHotkey.dll into the game process.
+    ExitApp
   }
   PID := 0
 }
