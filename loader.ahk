@@ -5,6 +5,11 @@
 #Persistent
 #SingleInstance, force
 
+if (!A_IsAdmin) {
+  Run *RunAs "%A_ScriptFullPath%"
+  ExitApp
+}
+
 Menu, tray, tip, zoom loader
 Menu, tray, NoStandard
 Menu, tray, Add, Edit settings, settings
