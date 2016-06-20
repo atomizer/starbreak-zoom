@@ -34,6 +34,10 @@ Native resolution: Numpad 0
 
 To edit the keys, window size and which monitor to put the window on, right-click the loader icon. To apply the settings you need to close and re-open the game. Acceptable key names can be found [here](https://autohotkey.com/docs/KeyList.htm).
 
+### Troubleshooting
+
+If encounter an error, please post an [issue](https://github.com/atomizer/starbreak-zoom/issues).
+
 ### Creating the binary
 
 If you don't trust me, you can compile the EXE yourself. You will need:
