@@ -128,10 +128,11 @@ setWinPos := DynaCall("SetWindowPos", "t==ttiiiii")
 PID := DllCall("GetCurrentProcessId")
 
 window := 0
-while (window = 0) {
+while (!window) {
   WinGet, window, ID, ahk_pid %PID%
   sleep 100
 }
+sleep 3000
 
 ; --------------------------------------------------------------------------
 ; hooks

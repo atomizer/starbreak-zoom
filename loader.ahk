@@ -46,7 +46,7 @@ LoadScript() {
     return
   }
   TrayTip, , game process detected, 2
-  sleep 3000
+  sleep 1000
 
   FileRead, remoteScript, remote.ahk
   rThread := InjectAhkDll(PID, A_ScriptDir "\AutoHotkey.dll", remoteScript)
