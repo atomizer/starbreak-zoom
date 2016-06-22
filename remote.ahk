@@ -65,7 +65,9 @@ maxZoom := 6
 keyDelay := 300
 
 ; hp
+IniRead, hpBar, %ini%, hp, bar, 1
 IniRead, hpSize, %ini%, hp, size, 28
+IniWrite, %hpBar%, %ini%, hp, bar
 IniWrite, %hpSize%, %ini%, hp, size
 
 ; --------------------------------------------------------------------------
@@ -209,12 +211,12 @@ GLGetDrawableSizeHook(window, width, height) {
 SwapWindowHook(window) {
   critical
   global GL_FRAMEBUFFER, GL_RENDERBUFFER, GL_FRAMEBUFFER_COMPLETE
-  global GL_DRAW_FRAMEBUFFER, GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_BACK, GL_COLOR_BUFFER_BIT, GL_LINEAR, GL_RGBA8
+  global GL_DRAW_FRAMEBUFFER, GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_BACK, GL_COLOR_BUFFER_BIT, GL_LINEAR, GL_NEAREST, GL_RGBA8
   global BUFFERWIDTH, BUFFERHEIGHT
   global glGenFramebuffers, glBindFramebuffer, glBindRenderbuffer, glRenderbufferStorage, glGenRenderbuffers
   global glFramebufferRenderbuffer, glCheckFramebufferStatus, glBlitFramebuffer, glGetError
   global origSwapWindow, needsetup, framebuffer, renderbuffer
-  global wWidth, wHeight, cWidth, cHeight
+  global wWidth, wHeight, cWidth, cHeight, hpBar
 
   if (needsetup) {
     InitGLFunctions()
@@ -252,6 +254,12 @@ SwapWindowHook(window) {
   glBindFramebuffer[GL_DRAW_FRAMEBUFFER, 0]
   glBlitFramebuffer[0, 0, cWidth, cHeight, 0, 0, wWidth, wHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR]
   checkGLError("glBlitFramebuffer")
+
+  ; hp bar
+  if (hpBar) {
+    glBlitFramebuffer[235, cHeight - 55, 236, cHeight - 56, 0, wHeight - 7, wWidth, wHeight - 5, GL_COLOR_BUFFER_BIT, GL_NEAREST]
+    glBlitFramebuffer[109, cHeight - 41, 217, cHeight - 40, 0, wHeight - 5, wWidth, wHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR]
+  }
 
   ; don't forget to call the original function
   glBindFramebuffer[GL_FRAMEBUFFER, 0]
