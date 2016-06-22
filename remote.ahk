@@ -240,11 +240,11 @@ SwapWindowHook(window) {
 
   ; copy what was drawn on the framebuffer to the screen
   glBindFramebuffer[GL_DRAW_FRAMEBUFFER, 0]
-  glBindFramebuffer[GL_READ_FRAMEBUFFER, framebuffer]
   glBlitFramebuffer[0, 0, cWidth, cHeight, 0, 0, wWidth, wHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR]
   checkGLError("glBlitFramebuffer")
 
   ; don't forget to call the original function
+  glBindFramebuffer[GL_FRAMEBUFFER, 0]
   origSwapWindow[window]
 
   ; redirect drawing to our framebuffer
