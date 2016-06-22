@@ -121,17 +121,15 @@ GL_BLEND := 0x0BE2
 ; --------------------------------------------------------------------------
 ; init
 
+PID := DllCall("GetCurrentProcessId")
+
+WinWait, ahk_pid %PID%
+sleep 3000
+
 getGLProc := DynaCall("SDL2\SDL_GL_GetProcAddress", "i=a")
 setWinPos := DynaCall("SetWindowPos", "t==ttiiiii")
 
-PID := DllCall("GetCurrentProcessId")
 
-window := 0
-while (!window) {
-  WinGet, window, ID, ahk_pid %PID%
-  sleep 100
-}
-sleep 3000
 
 ; --------------------------------------------------------------------------
 ; hooks
@@ -165,9 +163,8 @@ origGLGetDrawableSize := DynaCall(origPtr, "ttt")
 DllCall("MinHook\MH_EnableHook", "Ptr", 0, "Int")
 
 ; --------------------------------------------------------------------------
-; start the party (assuming the loader already waited enough)
+; start the party
 
-setupWindow()
 update()
 
 return
@@ -312,18 +309,18 @@ native() {
 }
 
 update() {
-  global zoom, zstep, aspectRatio, cWidth, cHeight
+  global zoom, zstep, aspectRatio, cWidth, cHeight, window, PID
+  WinGet, window, ID, ahk_pid %PID%
+  if (!window) {
+    MsgBox, 16, , Unexpected condition: the game window no longer exists.
+    ExitApp
+  }
   cWidth := Round(zoom * zstep)
   cHeight := Round(cWidth * aspectRatio)
-  pingWindow()
-;  str := cWidth . " x " . cHeight
-;  TrayTip,, %str%, 3, 16
-}
-
-setupWindow() {
-  global window
-  ; remove flags WS_CAPTION | WS_SIZEBOX
   WinSet, Style, -0xC40000, ahk_id %window%
+  pingWindow()
+  str := cWidth . " x " . cHeight
+  Menu, tray, tip, %str%
 }
 
 ; send resize event to trigger the hooks
