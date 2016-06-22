@@ -81,7 +81,6 @@ cHeight := wHeight
 
 framebuffer := 0
 renderbuffer := 0
-dh := 0
 lastKeyTime := 0
 
 ; --------------------------------------------------------------------------
@@ -329,13 +328,9 @@ setupWindow() {
 
 ; send resize event to trigger the hooks
 pingWindow() {
-  global setWinPos, window, wLeft, wTop, wWidth, wHeight, dh
-  if (dh = 0) {
-    dh := 1
-  } else {
-    dh := 0
-  }
-  setWinPos[window, 0, wLeft, wTop, wWidth, wHeight + dh, 0]
+  global setWinPos, window, wLeft, wTop, wWidth, wHeight
+  setWinPos[window, 0, wLeft, wTop, wWidth, wHeight + 1, 0]
+  setWinPos[window, 0, wLeft, wTop, wWidth, wHeight, 0]
 }
 
 log(str) {
