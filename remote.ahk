@@ -64,6 +64,10 @@ maxZoom := 6
 ; key delay
 keyDelay := 300
 
+; hp
+IniRead, hpSize, %ini%, hp, size, 28
+IniWrite, %hpSize%, %ini%, hp, size
+
 ; --------------------------------------------------------------------------
 ; globals
 
@@ -129,7 +133,12 @@ sleep 3000
 getGLProc := DynaCall("SDL2\SDL_GL_GetProcAddress", "i=a")
 setWinPos := DynaCall("SetWindowPos", "t==ttiiiii")
 
+TTFOpenFont := DynaCall("SDL2_ttf\TTF_OpenFont", "t==ai")
+TTFSetFontOutline := DynaCall("SDL2_ttf\TTF_SetFontOutline", "ti")
 
+hpfont := TTFOpenFont["client\data\font\HemiHeadBold.ttf", hpSize]
+hpoutlinefont := TTFOpenFont["client\data\font\HemiHeadBold.ttf", hpSize]
+TTFSetFontOutline[hpoutlinefont, 2]
 
 ; --------------------------------------------------------------------------
 ; hooks
@@ -158,6 +167,11 @@ origGetWindowSize := DynaCall(origPtr, "ttt")
 hookPtr := RegisterCallback("GLGetDrawableSizeHook", "C", 3)
 DllCall("MinHook\MH_CreateHookApi", "Str", "SDL2", "AStr", "SDL_GL_GetDrawableSize", "Ptr", hookPtr, "PtrP", origPtr, "Int")
 origGLGetDrawableSize := DynaCall(origPtr, "ttt")
+
+; TTF_RenderUTF8_Blended
+hookPtr := RegisterCallback("TTFRenderHook", "C", 3)
+DllCall("MinHook\MH_CreateHookApi", "Str", "SDL2_ttf", "AStr", "TTF_RenderUTF8_Blended", "Ptr", hookPtr, "PtrP", origPtr, "Int")
+origTTFRender := DynaCall(origPtr, "i==tti")
 
 ; enable everything
 DllCall("MinHook\MH_EnableHook", "Ptr", 0, "Int")
@@ -248,6 +262,24 @@ SwapWindowHook(window) {
 
   ; we are already running every frame, might as well do hotkeys by hand
   checkKeys()
+}
+
+TTFRenderHook(font, text, color) {
+  critical
+  global origTTFRender
+  global hpfont, hpoutlinefont
+
+  str := StrGet(text, , "UTF-8")
+  if (RegExMatch(str, "^\d+/(\d+)$", match) && match1 >= 50) {
+    if (color = 0xff000000) {
+      font := hpoutlinefont
+    } else {
+      font := hpfont
+    }
+  }
+
+  ret := origTTFRender[font, text, color]
+  return ret
 }
 
 ; --------------------------------------------------------------------------
