@@ -23,12 +23,11 @@ Native resolution: Numpad 0
 
 ### Limitations
 
-- assigned keys are always active; do not assign keys that you are going to use for something else
-- does not work correctly in fullscreen mode
-- can't use the mouse in menus if not at native resolution (just switch to native)
-- can't toggle vsync while the script is running; if you need to change vsync, exit the game, close the loader and launch the game without it
-- there are problems with OBS in "Game capture" mode - use "window capture" for now
-- might impact performance on low-end machines
+- Assigned keys are always active while the game is running. Do not assign keys that you are going to use for something else.
+- Does not work correctly in fullscreen mode.
+- Can't use the mouse in menus if the game is not at native resolution. Just switch to native and back.
+- Can't toggle vsync while the script is running. If you need to change vsync, exit the game, close the loader and launch the game clean.
+- OBS Classic will crash the game in "Game capture" mode. Use OBS Studio.
 
 ### Settings
 
